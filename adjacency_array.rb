@@ -1,3 +1,4 @@
+require 'set'
 # create and populate the adjacency array
 
 class Square
@@ -52,3 +53,22 @@ end
 BOARD = build_adjecency_array([])
 
 # BOARD.each {|square| puts square.neighbors; puts "\n"}
+
+def knight_moves(start_square, end_square)
+  queue = Queue.new
+  visited = Set.new
+  queue.enq find_square(start_square, BOARD)
+  end_square = find_square(end_square, BOARD)
+  until queue.empty?
+    current_square = queue.deq
+    puts current_square.file + current_square.rank.to_s
+    if current_square == end_square
+      puts "Reached"
+      break
+    end
+    visited.add current_square
+    current_square.neighbors.each{ |neighbor| queue.enq neighbor unless visited.include?(neighbor) }
+  end
+end
+
+knight_moves('b1', 'c4')
