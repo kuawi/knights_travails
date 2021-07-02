@@ -69,11 +69,30 @@ def depth_first(start_square, end_square, visited = Set.new)
   [start_square] + depth_first(next_square, end_square, visited)
 end
 
+def recursive_inspect(current_square, end_square, visited = Set.new) # rubocop:todo Metrics/MethodLength
+  visited.add current_square
+  return [current_square, end_square] if current_square.neighbors.include? end_square
+
+  shortest_path_size = Float::INFINITY
+  shortest_path = []
+  current_square.neighbors.each do |neighbor|
+    next if visited.include? neighbor
+
+    path = recursive_inspect(neighbor, end_square, visited)
+    if path.size < shortest_path_size
+      shortest_path = path
+      shortest_path_size = shortest_path.size
+    end
+    break if shortest_path_size == 2
+  end
+  [current_square] + shortest_path
+end
+
 def knight_moves(start_square, end_square)
   start_square = find_square(start_square, BOARD)
   end_square = find_square(end_square, BOARD)
-  path = depth_first(start_square, end_square)
+  path = recursive_inspect(start_square, end_square)
   path.each { |square| puts square.file + square.rank.to_s }
 end
 
-knight_moves('b1', 'e7')
+knight_moves('a1', 'h3')
