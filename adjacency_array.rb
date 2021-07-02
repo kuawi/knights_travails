@@ -53,3 +53,27 @@ end
 BOARD = build_adjecency_array([])
 
 # BOARD.each {|square| puts square.neighbors; puts "\n"}
+
+def depth_first(start_square, end_square, visited = Set.new)
+  return [] unless start_square
+  return [start_square, end_square] if start_square.neighbors.include? end_square
+
+  visited.add start_square
+  next_square = nil
+  start_square.neighbors.each do |neighbor|
+    next if visited.include? neighbor
+
+    next_square = neighbor
+    break
+  end
+  [start_square] + depth_first(next_square, end_square, visited)
+end
+
+def knight_moves(start_square, end_square)
+  start_square = find_square(start_square, BOARD)
+  end_square = find_square(end_square, BOARD)
+  path = depth_first(start_square, end_square)
+  path.each { |square| puts square.file + square.rank.to_s }
+end
+
+knight_moves('b1', 'e7')
